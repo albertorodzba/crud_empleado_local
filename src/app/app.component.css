@@ -1,14 +1,41 @@
 .template{
-	padding-left: var(--main-padding);
-	padding-right: var(--main-padding);
+	padding: 2rem;
+
 }
 
-.table-container, .filters{
+.table-container, .filters, .buttons{
 	width: 100%;
 	display: flex;
 	justify-content: center;
+
 }
 
 .table{
-	width: 50rem;
+	width: 100%;
+	box-shadow: 1px 10px 10px  #eeeeee;
+}
+
+.filters{
+	width: 100%;
+	display: flex;
+	justify-content: space-evenly ;
+	margin-bottom: 2rem;
+	align-items: center;
+
+	background-color: #eeeeee;
+	color: var(--white);
+	height: 7rem;
+	box-shadow: 1px 1px 10px 1px;
+}
+
+.selectable{
+	cursor: pointer;
+}
+.selectable:hover{
+	color: #919191
+}
+
+.filters__input{
+	padding: 2px px;
+	width: 100%;
 }

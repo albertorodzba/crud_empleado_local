@@ -12,6 +12,7 @@ export class AppComponent implements OnInit{
 
   url: string = "/assets/empleados.json";
   empleados: any;
+  page: number = 0;
 
   constructor(private _http: HttpClient){
 
@@ -32,4 +33,19 @@ export class AppComponent implements OnInit{
       },
     });
   }
+
+  getNextPage(){
+    if (this.page <= this.empleados.length)
+    { 
+      this.page += 6; 
+      console.log("page",this.page)
+    }
+    
+  }
+  getPreviousPage(){
+    if(this.page > 0)
+      this.page -= 6;
+  }
+
+
 }

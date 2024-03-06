@@ -1,35 +1,66 @@
 <app-navbar></app-navbar>
 
 <main class="template">
-  <div class="filters">
-    <form>
-      <input type="text" placeholder="e">
-      <input type="text" placeholder="e">
-      <input type="text" placeholder="e">
-      <input type="text" placeholder="e">
-    </form>
-  </div>
   <div class="table-container">
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
+          <th>
+            <input type="text" placeholder="Buscar por ID" class="filters__input" #id (keyup)="filter(id.value)">
+          </th>
+          <th>
+            <input type="text" placeholder="Buscar por nombre" class="filters__input" #nombre (keyup)="filter(nombre.value)">
+          </th>
+          <th></th>
+          <th>    
+            <select name="select" class="filters__input" #cargo (select)="filter(cargo.value)">
+              <option value="1">Value 1</option>
+            </select></th>
+          <th colspan="3"></th>
+        </tr>
+        <tr>
           <th>ID</th>
           <th>Nombre</th>
           <th>Edad</th>
-          <th>Fecha Nacimiento</th>
           <th>Cargo</th>
-          <th>Acciones</th>
+          <th colspan="3">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let empleado of empleados">
+        <tr *ngFor="let empleado of empleados | filter:page:id:nombre:cargo" >
           <td>{{empleado.id}}</td>
           <td>{{empleado.nombre}}</td>
           <td>{{empleado.edad}}</td>
-          <td>{{empleado.fechaNacimiento}}</td>
           <td>{{empleado.cargo}}</td>
+          <td class="selectable">Editar</td>
+          <td class="selectable">Eliminar</td>
+          <td class="selectable">Cambiar status</td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div class="buttons">
+    <button type="button" class="btn" (click)="getPreviousPage()">Anterior</button>
+    <button type="button" class="btn btn-primary" (click)="getNextPage()">Siguiente</button>
+  </div>
+  <div class="card">
+    <form>
+      <div class="mb-2">
+
+      </div>
+      <div class="mb-2">
+
+      </div>
+      <div class="mb-2">
+
+      </div>
+      <div class="mb-2">
+
+      </div>
+      <div class="mb-2">
+        
+      </div>
+    </form>
+  </div>
+  
 </main>
