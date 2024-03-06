@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  
+body {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1rem;
+  width: 100%;
+}
+
+:root{
+  --background-color-navbar: #105FE8;
+  --white: rgb(211, 211, 211);
+  --main-padding: 10px;
+  
+}

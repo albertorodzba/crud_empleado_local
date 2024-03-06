@@ -1,0 +1,14 @@
+[
+	{
+		"id": 1,
+		"cargo": "Empleado General"
+	},
+	{
+		"id": 2,
+		"cargo": "Supervisor"
+	},
+	{
+		"id": 3,
+		"cargo": "Programador"
+	}
+]
