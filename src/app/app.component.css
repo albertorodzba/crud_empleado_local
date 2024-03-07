@@ -85,3 +85,10 @@ td, th{
 	vertical-align: middle;
 }
 
+.alert{
+	position: absolute;
+	width: 50%;
+	top: 5%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}

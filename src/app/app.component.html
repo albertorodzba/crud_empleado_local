@@ -1,5 +1,9 @@
 <app-navbar></app-navbar>
 
+<div *ngIf="visibleAlert" [ngClass]="{'alert-success': saved.success, 'alert-danger': !saved.success}" class="alert d-flex justify-content-center" role="alert">
+  {{ saved.message}}
+</div>
+
 <main class="template">
   <div class="table-container">
     <table class="table table-striped table-bordered">
@@ -8,6 +12,7 @@
           <th>
             <input type="number" placeholder="Buscar por ID" class="filters__input form-control" [(ngModel)]="empleadoId">
           </th>
+          
           <th>
             <input type="text" placeholder="Buscar por nombre" class="filters__input form-control" [(ngModel)]="nombre">
           </th>
@@ -31,13 +36,17 @@
         <tr *ngFor="let empleado of empleados| filter:page:empleadoId:nombre:cargo" >
           <td>{{empleado.id}}</td>
           <td>{{empleado.nombre}}</td>
-          <td>{{empleado.edad}}</td>
-          <td>{{empleado.cargo | cargoNombre:cargos}}</td>
+          <td style="cursor: pointer; width: 150px;">
+            <input class="form-control" type="number" [value]="empleado.edad" #newAge (blur)="changeEdad(empleado.id, newAge.value)"/>
+          </td>
+          <td>{{empleado.cargo | nombreCargo:cargos}}</td>
+
           <td class="selectable edit">
-            <span class="material-symbols-outlined" title="Editar información">
+            <span class="material-symbols-outlined" title="Editar información" (click)="editEmpleado(empleado.id)">
               edit
-            </span></td>
-          <td class="selectable" title="Eliminar empleado">
+            </span>
+          </td>
+          <td class="selectable" title="Eliminar empleado" (click)="delete(empleado.id)">
             <span class="material-symbols-outlined delete">
               delete
             </span>
@@ -53,7 +62,7 @@
         </tr>
         <tr>
           <td colspan="7" class="p-0">
-            <div class="add" (click)="modalState()">
+            <div class="add" (click)="changeModalVisibility()">
               <span class="material-symbols-outlined">
                 add_circle
               </span>
@@ -69,4 +78,14 @@
     <button type="button" class="btn btn-primary" (click)="getNextPage()">Siguiente</button>
   </div>
 </main>
-<app-modal [showModal]="showModal" (modalStateEvent)="closeModal($event)" (addEmpleado)="nuevoEmpleado($event)" [empleados]="empleados"></app-modal>
+<app-modal 
+  [showModal]="showModal" 
+  (modalStateEvent)="closeModal($event)" 
+  (addEmpleado)="nuevoEmpleado($event)" 
+  (showAlert)="showAlert($event)" 
+  [empleados]="empleados"
+  [editarEmpleado]="editarEmpleado"
+  (changeAction)="changeAction($event)"
+  [action]="actionModal"
+  >
+</app-modal>

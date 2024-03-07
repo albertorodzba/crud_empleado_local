@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FilterPipe } from './pipes/filter.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CargoNombrePipe } from './pipes/cargo-nombre.pipe';
+import { CargoNombrePipe } from './pipes/nombre-cargo.pipe';
 import { ComponentsModule } from './components/components.module';
 
 @NgModule({
