@@ -17,6 +17,7 @@
             <input type="text" placeholder="Buscar por nombre" class="filters__input form-control" [(ngModel)]="nombre">
           </th>
           <th></th>
+          <th></th>
           <th>
             <select name="select" class="filters__input form-control" [(ngModel)]="cargo" >
               <option value="0">Buscar por cargo</option>
@@ -27,6 +28,7 @@
         <tr>
           <th>ID</th>
           <th>Nombre</th>
+          <th>Fecha nacimiento</th>
           <th>Edad</th>
           <th>Cargo</th>
           <th colspan="3">Acciones</th>
@@ -36,7 +38,8 @@
         <tr *ngFor="let empleado of empleados| filter:page:empleadoId:nombre:cargo" >
           <td>{{empleado.id}}</td>
           <td>{{empleado.nombre}}</td>
-          <td style="cursor: pointer; width: 150px;">
+          <td>{{empleado.fechaNacimiento}}</td>
+          <td style="cursor: pointer; width: 200px;">
             <input class="form-control" type="number" [value]="empleado.edad" #newAge (blur)="changeEdad(empleado.id, newAge.value)"/>
           </td>
           <td>{{empleado.cargo | nombreCargo:cargos}}</td>
@@ -61,7 +64,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="7" class="p-0">
+          <td colspan="8" class="p-0">
             <div class="add" (click)="changeModalVisibility()">
               <span class="material-symbols-outlined">
                 add_circle
@@ -87,5 +90,6 @@
   [editarEmpleado]="editarEmpleado"
   (changeAction)="changeAction($event)"
   [action]="actionModal"
+  (actualizar)="actualizarEmpleados($event)"
   >
 </app-modal>

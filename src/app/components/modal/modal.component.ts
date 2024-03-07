@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, AfterViewInit,Input, Output, EventEmitter } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { FormControl, FormGroup, UntypedFormArray, Validators } from '@angular/forms';
 import { Cargo } from 'src/app/schemas/cargo.interface';
 import { DataAlert } from 'src/app/schemas/data-alert.interface';
 import { Empleado } from 'src/app/schemas/empleado.interface';
+import { HttpRequestService } from 'src/app/services/httpRequest.service';
 
 
 @Component({
@@ -11,9 +12,8 @@ import { Empleado } from 'src/app/schemas/empleado.interface';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements OnInit, AfterViewInit {
+export class ModalComponent implements OnInit, OnChanges {
 
-  urlCargos: string = "/assets/cargos.json";
   cargos: any;
   initialDate: string = new Date().toISOString().slice(0, 10).toString();
   lastId: number = 0;
@@ -27,6 +27,7 @@ export class ModalComponent implements OnInit, AfterViewInit {
   @Output() addEmpleado = new EventEmitter<Empleado>();
   @Output() showAlert = new EventEmitter<DataAlert>();
   @Output() changeAction = new EventEmitter<string>();
+  @Output() actualizar = new EventEmitter<Empleado>();
 
   public empleadoForm: FormGroup = new FormGroup({
     nombre: new FormControl(null, [Validators.required]),
@@ -36,28 +37,29 @@ export class ModalComponent implements OnInit, AfterViewInit {
     activo: new FormControl(true as boolean, null),
   })
 
-  constructor(private _http: HttpClient){}
+  constructor(private _http: HttpClient, private _requestService: HttpRequestService){}
+  
   ngOnInit(){
     this.getCargos();
+
   }
 
-  ngAfterViewInit(): void {
-    console.log("action from modal", this.action)
-    if(this.action === "edit") {
-      console.log("modal value", this.editarEmpleado)
+  ngOnChanges(changes: SimpleChanges): void {
+    const currentAction = changes['action'] ? changes['action'].currentValue : "";
+    if( currentAction === "edit") {
       const { nombre, fechaNacimiento, edad, cargo, activo } = this.editarEmpleado;
       this.empleadoForm.patchValue({
         nombre,
-        fechaNacimiento,
-        edad,
+        fechaNacimiento: new Date(fechaNacimiento).toISOString().slice(0,10).toString(),
+        edad: edad.toString(),
         cargo,
-        activo
+        activo: Boolean(activo)
       })
     }
   }
 
   getCargos(): void {
-    this._http.get<Cargo>(this.urlCargos).subscribe({
+    this._requestService.getCargos().subscribe({
       next: (result) => {
         this.cargos = result;
 
@@ -74,13 +76,10 @@ export class ModalComponent implements OnInit, AfterViewInit {
    */
   getLastId(): void{
     this.lastId = this.empleados[this.empleados.length - 1].id;
-    console.log("form", this.empleadoForm.value);
-    console.log("empleados", this.empleados[this.empleados.length-1].id)
-    console.log("this.lastId", this.lastId);
   }
 
   save(): void {
-    if(this.empleadoForm.valid){
+    if(this.empleadoForm.valid && this.action !== "edit"){
       const { 
         nombre, 
         edad,
@@ -93,7 +92,8 @@ export class ModalComponent implements OnInit, AfterViewInit {
 
       const empleado: Empleado = {
         id: this.lastId + 1 , 
-        nombre, edad: parseInt(edad, 10), 
+        nombre, 
+        edad: parseInt(edad, 10), 
         fechaNacimiento, 
         cargo: parseInt(cargo, 10), 
         activo: Boolean(activo)
@@ -108,24 +108,54 @@ export class ModalComponent implements OnInit, AfterViewInit {
           message: `Empleado guardado con exito con el ID ${this.lastId + 1}`,
         }
       )
-      // Despues de editar, se manda el valor de la accion a vacio para que se pueda usar este modal para agregar un nuevo empleado
-      if (this.action === "edit") {
-        this.changeAction.emit("");
-      }
     }
-    else{
+
+    /**Si se editará se realiza lo siguiente */
+    if(this.empleadoForm.valid && this.action === "edit"){
+      this.update();
+      
+    }
+  }
+  
+  /**
+   * Actualiza a un solo empleado a la vez en la lista de empleados
+  */
+update() : void {
+  const { 
+    nombre, 
+    edad,
+    fechaNacimiento,
+    cargo,
+    activo
+    } = this.empleadoForm.value;
+  
+    const empleado: Empleado = {
+      id: this.editarEmpleado.id , 
+      nombre, 
+      edad: parseInt(edad, 10), 
+      fechaNacimiento, 
+      cargo: parseInt(cargo, 10), 
+      activo: Boolean(activo)
+    };
+    
+    this.actualizar.emit(empleado);
+
+    // Se resetean los campos
+    this.empleadoForm.reset({name: null, fechaNacimiento: this.initialDate, edad: 0 , cargo: 0 , activo: true});
+      this.closeModal();
       this.showAlert.emit(
         {
-          success: false,
-          message: "Los campos del formulario son obligatorios",
+          success: true,
+          message: `Empleado con el ID = ${this.editarEmpleado.id} actualizado con exito `,
         }
       )
-    }
   }
 
   closeModal(): void {
     this.showModal = !this.showModal;
     this.modalStateEvent.emit(this.showModal);
+    // Despues de editar o guardar, se manda el valor de la accion a vacio para que se pueda usar este modal para hacer la siguiente accion
+    this.changeAction.emit("");
     this.empleadoForm.reset({name: null, fechaNacimiento: this.initialDate, edad: 0 , cargo: 0, activo: true});
   }
 
@@ -145,4 +175,9 @@ export class ModalComponent implements OnInit, AfterViewInit {
     }
     return "";
   }
+
+  getIndex(empleadoId: number): number{
+    return this.empleados.findIndex((empleado: Empleado) => empleado.id === empleadoId);
+  }
+
 }

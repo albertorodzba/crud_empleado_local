@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Empleado } from './schemas/empleado.interface';
 import { Observable } from 'rxjs';
 import { Cargo } from './schemas/cargo.interface';
 import { DataAlert } from './schemas/data-alert.interface';
+import { HttpRequestService } from './services/httpRequest.service';
 
 
 @Component({
@@ -13,8 +14,6 @@ import { DataAlert } from './schemas/data-alert.interface';
 })
 export class AppComponent implements OnInit{
 
-  urlEmpleados: string = "/assets/empleados.json";
-  urlCargos: string = "/assets/cargos.json";
   empleados!: Empleado[];
   cargos!: Cargo[];
   page: number = 0;
@@ -27,7 +26,7 @@ export class AppComponent implements OnInit{
   actionModal: string = "" ;
   editarEmpleado!: Empleado ;
 
-  constructor(private _http: HttpClient){
+  constructor(private _http: HttpClient, private _requestService:HttpRequestService){
 
   }
   ngOnInit(){
@@ -35,8 +34,9 @@ export class AppComponent implements OnInit{
     this.getCargos();
   }
 
-  getEmpleados(): void {
-    this._http.get<Empleado[]>(this.urlEmpleados).subscribe({
+
+  getEmpleados(): void{
+    this._requestService.getEmpleados().subscribe({
       next: (result) => {
         this.empleados = result
       },
@@ -44,11 +44,11 @@ export class AppComponent implements OnInit{
         console.log(`Error => ${error.message.toString()}`);
         alert('Error al recuperar la informacion de los empleados');
       },
-    });
+    });;
   }
 
   getCargos(): void {
-    this._http.get<Cargo[]>(this.urlCargos).subscribe({
+    this._requestService.getCargos().subscribe({
       next: (result) => {
         this.cargos = result;
 
@@ -117,10 +117,9 @@ export class AppComponent implements OnInit{
   editEmpleado(empleadoId: number): void{
     const index = this.getIndex(empleadoId);
     if(!this.empleados[index].activo){
-      this.editarEmpleado = this.empleados.filter((empleado) => empleado.id === this.empleados[index].id)[0];
+      this.editarEmpleado = [...this.empleados.filter((empleado) => empleado.id === this.empleados[index].id)][0];
       this.actionModal = "edit";
       this.showModal = true;
-      console.log(this.editarEmpleado);
     }else{
       this.showAlert(
         {
@@ -142,6 +141,19 @@ export class AppComponent implements OnInit{
     setTimeout(() => {
       this.visibleAlert = false;
     }, 4000);
+  }
+
+  /**Actualiza la lista de datos una vez cambiada desde el modal */
+  actualizarEmpleados(empleado: Empleado): void{
+    const index = this.getIndex(this.editarEmpleado.id);
+    // Se edita al empleado
+
+    this.empleados[index] = empleado;
+
+    // Con la linea anterior angular no toma el cambio en la vista de la lista, por lo que se crea una nueva instancia
+    // para que pueda actualizar los datos en la vista
+    this.empleados = this.empleados.slice();
+
   }
 
 }
