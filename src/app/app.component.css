@@ -36,6 +36,52 @@
 }
 
 .filters__input{
-	padding: 2px px;
+	padding: 1px 10px;
 	width: 100%;
+	border: 1px solid #919191;
+
 }
+.filters__input:focus{
+	outline: 1px solid #cecece;
+}
+
+.toggle-on{
+	color: var(--correct);
+}
+
+.toggle-off{
+	color: var(--incorrect);
+}
+
+.delete{
+	color: var(--incorrect);
+}
+
+.edit{
+	color: var(--warning);
+}
+
+.add{
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	padding: 8px;
+}
+
+
+.add:hover{
+	background-color: var(--correct);
+	color: white;
+}
+
+tr:nth-last-child{
+	padding: 0;
+	background-color: #eeeeee;
+}
+
+td, th{
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}
+

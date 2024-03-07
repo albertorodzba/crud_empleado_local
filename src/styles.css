@@ -19,5 +19,15 @@ body {
   --white: rgb(211, 211, 211);
   --main-padding: 10px;
   --gray: #3C4C69;
-  
+  --correct:rgb(88, 255, 113);
+  --incorrect: rgb(255, 88, 88);
+  --warning: rgb(207, 178, 52);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
 }

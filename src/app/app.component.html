@@ -6,15 +6,16 @@
       <thead>
         <tr>
           <th>
-            <input type="text" placeholder="Buscar por ID" class="filters__input" #id (keyup)="filter(id.value)">
+            <input type="number" placeholder="Buscar por ID" class="filters__input form-control" [(ngModel)]="empleadoId">
           </th>
           <th>
-            <input type="text" placeholder="Buscar por nombre" class="filters__input" #nombre (keyup)="filter(nombre.value)">
+            <input type="text" placeholder="Buscar por nombre" class="filters__input form-control" [(ngModel)]="nombre">
           </th>
           <th></th>
-          <th>    
-            <select name="select" class="filters__input" #cargo (select)="filter(cargo.value)">
-              <option value="1">Value 1</option>
+          <th>
+            <select name="select" class="filters__input form-control" [(ngModel)]="cargo" >
+              <option value="0">Buscar por cargo</option>
+              <option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.cargo}}</option>
             </select></th>
           <th colspan="3"></th>
         </tr>
@@ -27,14 +28,38 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let empleado of empleados | filter:page:id:nombre:cargo" >
+        <tr *ngFor="let empleado of empleados| filter:page:empleadoId:nombre:cargo" >
           <td>{{empleado.id}}</td>
           <td>{{empleado.nombre}}</td>
           <td>{{empleado.edad}}</td>
-          <td>{{empleado.cargo}}</td>
-          <td class="selectable">Editar</td>
-          <td class="selectable">Eliminar</td>
-          <td class="selectable">Cambiar status</td>
+          <td>{{empleado.cargo | cargoNombre:cargos}}</td>
+          <td class="selectable edit">
+            <span class="material-symbols-outlined" title="Editar información">
+              edit
+            </span></td>
+          <td class="selectable" title="Eliminar empleado">
+            <span class="material-symbols-outlined delete">
+              delete
+            </span>
+          </td>
+          <td class="selectable" (click)="changeStatus(empleado.id)">
+            <span *ngIf="empleado.activo" class="material-symbols-outlined toggle-on" title="Empleado activo">
+              toggle_on
+            </span>
+            <span *ngIf="!empleado.activo" class="material-symbols-outlined toggle-off" title="Empleado inactivo">
+              toggle_off
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="7" class="p-0">
+            <div class="add" (click)="modalState()">
+              <span class="material-symbols-outlined">
+                add_circle
+              </span>
+              <span>Agregar Nuevo Empleado</span>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -43,24 +68,5 @@
     <button type="button" class="btn" (click)="getPreviousPage()">Anterior</button>
     <button type="button" class="btn btn-primary" (click)="getNextPage()">Siguiente</button>
   </div>
-  <div class="card">
-    <form>
-      <div class="mb-2">
-
-      </div>
-      <div class="mb-2">
-
-      </div>
-      <div class="mb-2">
-
-      </div>
-      <div class="mb-2">
-
-      </div>
-      <div class="mb-2">
-        
-      </div>
-    </form>
-  </div>
-  
 </main>
+<app-modal [showModal]="showModal" (modalStateEvent)="closeModal($event)" (addEmpleado)="nuevoEmpleado($event)" [empleados]="empleados"></app-modal>

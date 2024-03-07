@@ -1,0 +1,42 @@
+<div *ngIf="showModal" class="background-modal">
+  <div  class="card">
+    <form [formGroup]="empleadoForm">
+      <div class="mb-2">
+        <label class="label">Nombre</label>
+        <input type="text" placeholder="Introduzca un nombre" class="form-control" formControlName="nombre">
+        <span *ngIf="isValid('nombre')" class="form-text text-danger">{{getFieldError('nombre')}}</span>
+      </div>
+
+      <div class="mb-2">
+        <label class="label">Fecha de nacimiento</label>
+        <input type="date" class="form-control" formControlName="fechaNacimiento">
+        <span *ngIf="isValid('fechaNacimiento')" class="form-text text-danger">{{getFieldError('fechaNacimiento')}}</span>
+      </div>
+
+      <div class="mb-2">
+        <label class="label">Edad</label>
+        <input type="number" placeholder="Introduzca la edad" class="form-control" formControlName="edad">
+        <span *ngIf="isValid('edad')" class="form-text text-danger">{{getFieldError('edad')}}</span>
+      </div>
+
+      <div class="mb-2">
+        <label class="label">Cargo</label>
+        <select name="select" class="filters__input form-control" formControlName="cargo">
+          <option value="0">Seleccione una opción</option>
+          <option *ngFor="let cargo of cargos" [value]="cargo.id">{{ cargo.cargo}}</option>
+        </select>
+        <span *ngIf="isValid('cargo')" class="form-text text-danger">{{getFieldError('cargo')}}</span>
+      </div>
+
+      <div class="mb-2">
+        <input type="checkbox" class="form-check-input" formControlName="estatus">
+        <label class="label">Estatus</label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn" (click)="cancel()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="save()">Siguiente</button>
+      </div>
+    </form>
+  </div>
+</div>

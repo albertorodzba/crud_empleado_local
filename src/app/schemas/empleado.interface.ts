@@ -2,7 +2,7 @@ export interface Empleado {
   id: number,
   nombre: string,
   edad: number,
-  activo: true,
+  activo: boolean,
   cargo: number
   fechaNacimiento: Date
 }
